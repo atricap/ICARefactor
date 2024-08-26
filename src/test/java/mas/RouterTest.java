@@ -198,7 +198,8 @@ public class RouterTest {
         UserAgent user1 = new UserAgent("A1", portal1);
         UserAgent user2 = new UserAgent("A2", portal1);
         UserAgent user3 = new UserAgent("A3", portal2);
-        Message message = new Message("R1", "A1",user1.portal, MessageType.DELETEUSERMESSAGE);
+        String prevNodeHandle = ""; // FIXME: is that right?
+        Message message = new Message("R1", "A1",user1.portal, prevNodeHandle, MessageType.DELETEUSERMESSAGE);
         portal1.addAgent(user1);
         portal1.addAgent(user2);
         portal2.addAgent(user3);
