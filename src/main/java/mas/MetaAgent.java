@@ -27,10 +27,25 @@ public abstract class MetaAgent extends ArrayBlockingQueue<Message> implements R
 {
     protected String userName;
     protected Portal portal;
+    protected Printer out;
     protected Lock lock = new ReentrantLock();
-    
+
     private Thread t;
     private boolean exit;
+
+    public MetaAgent(String userName, Portal portal, Printer out) {
+        super(100);
+
+        if(userName == null || userName.isEmpty() || portal == null)
+            throw new IllegalArgumentException("Please ensure your UserAgent username is not empty or null and your Portal is not null");
+
+        this.userName = userName;
+        this.portal = portal;
+        this.out = out;
+
+        this.exit = false;
+        startThread();
+    }
 
     /**
 
@@ -42,23 +57,27 @@ public abstract class MetaAgent extends ArrayBlockingQueue<Message> implements R
 
      * @throws IllegalArgumentException
 
-     * @see IllegalArgumentException.
+     * @see IllegalArgumentException
 
      */
-    public MetaAgent(String userName, Portal portal) 
+    public MetaAgent(String userName, Portal portal)
     {
+        this(userName, portal, new SystemOutPrinter());
+    }
+
+    public MetaAgent(String userName, Printer out) {
         super(100);
-        
-        if(userName == null || userName.isEmpty() || portal == null)
-            throw new IllegalArgumentException("Please ensure your UserAgent username is not empty or null and your Portal is not null");
-        
+
+        if(userName == null || userName.isEmpty())
+            throw new IllegalArgumentException("Please ensure your Portal/Router username is not null or empty");
+
         this.userName = userName;
-        this.portal = portal;
-        
+        this.out = out;
+
         this.exit = false;
         startThread();
     }
-    
+
     /**
 
      * The MetaAgent() makes use of the userName to start a thread.
@@ -67,7 +86,7 @@ public abstract class MetaAgent extends ArrayBlockingQueue<Message> implements R
 
      * @throws IllegalArgumentException
 
-     * @see IllegalArgumentException.
+     * @see IllegalArgumentException
 
      */
     public MetaAgent(String userName) 
@@ -78,8 +97,7 @@ public abstract class MetaAgent extends ArrayBlockingQueue<Message> implements R
             throw new IllegalArgumentException("Please ensure your Portal/Router username is not null or empty");
         
         this.userName = userName;
-        this.portal = portal;
-        
+
         this.exit = false;
         startThread();
     }
@@ -100,7 +118,7 @@ public abstract class MetaAgent extends ArrayBlockingQueue<Message> implements R
 
      * @throws IllegalArgumentException ex.
 
-     * @see IllegalArgumentException.
+     * @see IllegalArgumentException
 
      */
     @Override
@@ -135,6 +153,7 @@ public abstract class MetaAgent extends ArrayBlockingQueue<Message> implements R
      */
     public void messageHandler(Message message)
     {
-        System.out.println(message.getMessageBody());
+        String s = message.getMessageBody();
+        out.println(s);
     }
 }
